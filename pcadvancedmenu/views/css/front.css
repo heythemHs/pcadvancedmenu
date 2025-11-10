@@ -1,0 +1,297 @@
+/**
+ * PC Advanced Menu - Frontend Styles
+ * Based on CodePen multilevel hamburger menu
+ */
+
+/* Colors */
+:root {
+  --menu-white: #fff;
+  --menu-navy: #2e2f35;
+  --menu-navy-dark: #1e1e24;
+  --menu-navy-light: #494a50;
+  --menu-grey: #a5a5a4;
+  --menu-green: #20c270;
+  --menu-green-dark: #18a960;
+}
+
+/* Reset menu styles */
+ul.pushNav {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+/* Base menu styles */
+.pushNav {
+  height: 100%;
+  position: fixed;
+  top: 0;
+  z-index: 9999;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--menu-navy);
+  transition: ease-in-out 0.5s;
+}
+
+/* Menu positioning - right side (default) */
+.pc-advanced-menu[data-position="right"] .pushNav {
+  right: -350px;
+}
+
+@media screen and (max-width: 600px) {
+  .pc-advanced-menu[data-position="right"] .pushNav {
+    width: 75%;
+    right: -75%;
+  }
+}
+
+@media screen and (min-width: 601px) {
+  .pc-advanced-menu[data-position="right"] .pushNav {
+    width: 350px;
+    right: -350px;
+  }
+}
+
+.pc-advanced-menu[data-position="right"] .js-topPushNav.isOpen,
+.pc-advanced-menu[data-position="right"] .pushNav_level.isOpen {
+  right: 0;
+}
+
+.pc-advanced-menu[data-position="right"] .burger {
+  right: 48px;
+}
+
+/* Menu positioning - left side */
+.pc-advanced-menu[data-position="left"] .pushNav {
+  left: -350px;
+}
+
+@media screen and (max-width: 600px) {
+  .pc-advanced-menu[data-position="left"] .pushNav {
+    width: 75%;
+    left: -75%;
+  }
+}
+
+@media screen and (min-width: 601px) {
+  .pc-advanced-menu[data-position="left"] .pushNav {
+    width: 350px;
+    left: -350px;
+  }
+}
+
+.pc-advanced-menu[data-position="left"] .js-topPushNav.isOpen,
+.pc-advanced-menu[data-position="left"] .pushNav_level.isOpen {
+  left: 0;
+}
+
+.pc-advanced-menu[data-position="left"] .burger {
+  left: 48px;
+}
+
+/* Text styles */
+.pushNav,
+.pushNav a {
+  font-size: 1em;
+  font-family: helvetica, sans-serif;
+  font-weight: 100;
+  color: var(--menu-white);
+  text-decoration: none;
+}
+
+/* Body when menu is open */
+body.pushNavIsOpen {
+  overflow: hidden;
+  height: 100%;
+}
+
+/* Horizontal separator */
+.pushNav hr {
+  border: 1px solid #555;
+  margin: 10px 0;
+}
+
+/* Open/Close level controls */
+.closeLevel,
+.openLevel {
+  cursor: pointer;
+}
+
+.openLevel,
+.closeLevel,
+.pushNav a {
+  padding: 1em 0;
+  display: block;
+  text-indent: 20px;
+  transition: background 0.4s ease-in-out;
+  position: relative;
+}
+
+.openLevel:hover,
+.closeLevel:hover,
+.pushNav a:hover {
+  background: var(--menu-navy-light);
+}
+
+/* Header styling */
+.hdg {
+  background-color: var(--menu-navy-dark);
+  font-weight: bold;
+}
+
+/* Close level text color */
+.closeLevel,
+.closeLevel i {
+  font-size: 1em;
+  color: var(--menu-grey);
+}
+
+/* Chevron icon positioning */
+.openLevel .fa-chevron-right,
+.openLevel .pull-right {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Burger menu icon */
+.burger {
+  position: fixed;
+  top: 24px;
+  z-index: 9998;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.burger:hover {
+  transform: scale(1.1);
+}
+
+.burger i {
+  font-size: 2.5em;
+  color: var(--menu-navy);
+}
+
+/* Screen overlay */
+.screen {
+  position: fixed;
+  background: rgba(0, 0, 0, 0.7);
+  width: 100%;
+  height: 0;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  z-index: 9997;
+  cursor: pointer;
+}
+
+.pushNavIsOpen .screen {
+  height: 100%;
+  opacity: 1;
+}
+
+/* Font Awesome icon spacing */
+.pushNav .fa {
+  display: inline-block;
+  padding: 5px;
+  margin-right: 5px;
+}
+
+/* Menu item images */
+.menu-item-image {
+  max-width: 40px;
+  max-height: 40px;
+  vertical-align: middle;
+  margin-right: 10px;
+  border-radius: 4px;
+}
+
+/* Menu item types */
+.menu-item-tab > .openLevel {
+  font-weight: 500;
+  background: var(--menu-navy-dark);
+}
+
+.menu-item-category a {
+  color: var(--menu-white);
+}
+
+.menu-item-cms a {
+  color: var(--menu-white);
+}
+
+/* Submenu levels */
+.pushNav_level {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  background: var(--menu-navy);
+}
+
+.pc-advanced-menu[data-position="right"] .pushNav_level {
+  right: -100%;
+}
+
+.pc-advanced-menu[data-position="left"] .pushNav_level {
+  left: -100%;
+}
+
+/* Active submenu */
+.pc-advanced-menu[data-position="right"] .pushNav_level.isOpen {
+  right: 0;
+}
+
+.pc-advanced-menu[data-position="left"] .pushNav_level.isOpen {
+  left: 0;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .burger {
+    top: 15px;
+  }
+
+  .burger i {
+    font-size: 2em;
+  }
+}
+
+/* Animation improvements */
+.pushNav,
+.pushNav_level {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Close button styling */
+.closeLevel i.fa-close,
+.closeLevel i.fa-chevron-left {
+  margin-right: 10px;
+}
+
+/* Ensure proper stacking */
+.pc-advanced-menu {
+  position: relative;
+  z-index: 9999;
+}
+
+/* Hide menu items with display none when not active */
+.pushNav:not(.isOpen) {
+  display: none;
+}
+
+.pushNav.isOpen {
+  display: block;
+}
+
+.pushNav_level:not(.isOpen) {
+  visibility: hidden;
+}
+
+.pushNav_level.isOpen {
+  visibility: visible;
+}

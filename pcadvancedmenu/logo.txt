@@ -1,0 +1,13 @@
+LOGO FILE NEEDED
+==================
+
+Please add a logo.png file (64x64 pixels) to this directory.
+
+The logo will be displayed in the PrestaShop modules list.
+
+You can create one using any image editor or use an icon from:
+- https://www.flaticon.com/
+- https://iconscout.com/
+- Or create a custom one
+
+Recommended: A simple hamburger menu icon (☰) on a colored background
