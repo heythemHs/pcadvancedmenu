@@ -211,13 +211,558 @@ class AdminPcAdvancedMenuController extends ModuleAdminController
     }
 
     /**
-     * Render form
+     * Render form with tabs
      */
     public function renderForm()
     {
-        // Get parent items for dropdown
+        // Get data for dropdowns
+        $parent_items = $this->getParentMenuItems();
+        $category_list = $this->getCategoryList();
+        $cms_list = $this->getCMSList();
+        $customer_groups = $this->getCustomerGroups();
+
+        // Tab 1: Basic Information
+        $this->fields_form = array(
+            array(
+                'form' => array(
+                    'legend' => array(
+                        'title' => $this->l('Basic Information'),
+                        'icon' => 'icon-info'
+                    ),
+                    'input' => array(
+                        array(
+                            'type' => 'text',
+                            'label' => $this->l('Title'),
+                            'name' => 'title',
+                            'lang' => true,
+                            'required' => true,
+                            'desc' => $this->l('Menu item title displayed to users'),
+                            'col' => 6
+                        ),
+                        array(
+                            'type' => 'text',
+                            'label' => $this->l('Label'),
+                            'name' => 'label',
+                            'lang' => true,
+                            'desc' => $this->l('Optional label like "New" or "Sale"'),
+                            'col' => 4
+                        ),
+                        array(
+                            'type' => 'switch',
+                            'label' => $this->l('Show Label'),
+                            'name' => 'active_label',
+                            'is_bool' => true,
+                            'values' => array(
+                                array('id' => 'active_label_on', 'value' => 1, 'label' => $this->l('Yes')),
+                                array('id' => 'active_label_off', 'value' => 0, 'label' => $this->l('No'))
+                            ),
+                        ),
+                        array(
+                            'type' => 'radio',
+                            'label' => $this->l('Menu Type'),
+                            'name' => 'menu_type',
+                            'values' => array(
+                                array('id' => 'menu_type_0', 'value' => 0, 'label' => $this->l('Horizontal')),
+                                array('id' => 'menu_type_1', 'value' => 1, 'label' => $this->l('Vertical')),
+                                array('id' => 'menu_type_2', 'value' => 2, 'label' => $this->l('Mobile'))
+                            ),
+                        ),
+                        array(
+                            'type' => 'text',
+                            'label' => $this->l('Position'),
+                            'name' => 'position',
+                            'class' => 'fixed-width-xs',
+                            'desc' => $this->l('Menu item display order')
+                        ),
+                        array(
+                            'type' => 'switch',
+                            'label' => $this->l('Active'),
+                            'name' => 'active',
+                            'is_bool' => true,
+                            'values' => array(
+                                array('id' => 'active_on', 'value' => 1, 'label' => $this->l('Yes')),
+                                array('id' => 'active_off', 'value' => 0, 'label' => $this->l('No'))
+                            ),
+                        ),
+                        array(
+                            'type' => 'switch',
+                            'label' => $this->l('Float'),
+                            'name' => 'float',
+                            'is_bool' => true,
+                            'desc' => $this->l('Float menu item to right side'),
+                            'values' => array(
+                                array('id' => 'float_on', 'value' => 1, 'label' => $this->l('Yes')),
+                                array('id' => 'float_off', 'value' => 0, 'label' => $this->l('No'))
+                            ),
+                        ),
+                        array(
+                            'type' => 'switch',
+                            'label' => $this->l('Open in New Window'),
+                            'name' => 'new_window',
+                            'is_bool' => true,
+                            'values' => array(
+                                array('id' => 'new_window_on', 'value' => 1, 'label' => $this->l('Yes')),
+                                array('id' => 'new_window_off', 'value' => 0, 'label' => $this->l('No'))
+                            ),
+                        ),
+                    ),
+                    'submit' => array(
+                        'title' => $this->l('Save'),
+                    )
+                ),
+            ),
+            // Tab 2: URL Configuration
+            array(
+                'form' => array(
+                    'legend' => array(
+                        'title' => $this->l('URL Configuration'),
+                        'icon' => 'icon-link'
+                    ),
+                    'input' => array(
+                        array(
+                            'type' => 'radio',
+                            'label' => $this->l('URL Type'),
+                            'name' => 'url_type',
+                            'values' => array(
+                                array('id' => 'url_type_0', 'value' => 0, 'label' => $this->l('System URL (Category/CMS)')),
+                                array('id' => 'url_type_1', 'value' => 1, 'label' => $this->l('Custom URL')),
+                                array('id' => 'url_type_2', 'value' => 2, 'label' => $this->l('No Link (Parent Only)'))
+                            ),
+                        ),
+                        array(
+                            'type' => 'html',
+                            'name' => 'system_url_wrapper_start',
+                            'html_content' => '<div id="system-url-wrapper" class="conditional-wrapper">'
+                        ),
+                        array(
+                            'type' => 'select',
+                            'label' => $this->l('System Item Type'),
+                            'name' => 'item_type',
+                            'options' => array(
+                                'query' => array(
+                                    array('id' => 'custom', 'name' => $this->l('Custom Link')),
+                                    array('id' => 'category', 'name' => $this->l('Category')),
+                                    array('id' => 'cms', 'name' => $this->l('CMS Page')),
+                                    array('id' => 'tab', 'name' => $this->l('Tab (Parent Item)')),
+                                ),
+                                'id' => 'id',
+                                'name' => 'name'
+                            ),
+                        ),
+                        array(
+                            'type' => 'select',
+                            'label' => $this->l('Category'),
+                            'name' => 'id_category',
+                            'options' => array(
+                                'query' => $category_list,
+                                'id' => 'id_category',
+                                'name' => 'name'
+                            ),
+                        ),
+                        array(
+                            'type' => 'select',
+                            'label' => $this->l('CMS Page'),
+                            'name' => 'id_cms',
+                            'options' => array(
+                                'query' => $cms_list,
+                                'id' => 'id_cms',
+                                'name' => 'title'
+                            ),
+                        ),
+                        array(
+                            'type' => 'html',
+                            'name' => 'system_url_wrapper_end',
+                            'html_content' => '</div>'
+                        ),
+                        array(
+                            'type' => 'html',
+                            'name' => 'custom_url_wrapper_start',
+                            'html_content' => '<div id="custom-url-wrapper" class="conditional-wrapper">'
+                        ),
+                        array(
+                            'type' => 'text',
+                            'label' => $this->l('Custom Link'),
+                            'name' => 'link',
+                            'lang' => true,
+                            'desc' => $this->l('Enter custom URL (e.g., https://example.com)'),
+                            'col' => 6
+                        ),
+                        array(
+                            'type' => 'html',
+                            'name' => 'custom_url_wrapper_end',
+                            'html_content' => '</div>'
+                        ),
+                        array(
+                            'type' => 'select',
+                            'label' => $this->l('Parent Item'),
+                            'name' => 'id_parent',
+                            'options' => array(
+                                'query' => $parent_items,
+                                'id' => 'id',
+                                'name' => 'name'
+                            ),
+                            'desc' => $this->l('Select parent item for multi-level menu')
+                        ),
+                    ),
+                    'submit' => array(
+                        'title' => $this->l('Save'),
+                    )
+                ),
+            ),
+            // Tab 3: Icon & Image
+            array(
+                'form' => array(
+                    'legend' => array(
+                        'title' => $this->l('Icon & Image'),
+                        'icon' => 'icon-picture-o'
+                    ),
+                    'input' => array(
+                        array(
+                            'type' => 'radio',
+                            'label' => $this->l('Icon Type'),
+                            'name' => 'icon_type',
+                            'values' => array(
+                                array('id' => 'icon_type_0', 'value' => 0, 'label' => $this->l('Upload Icon Image')),
+                                array('id' => 'icon_type_1', 'value' => 1, 'label' => $this->l('Icon Class (Font Awesome)'))
+                            ),
+                        ),
+                        array(
+                            'type' => 'html',
+                            'name' => 'icon_class_wrapper_start',
+                            'html_content' => '<div id="icon-class-wrapper" class="conditional-wrapper">'
+                        ),
+                        array(
+                            'type' => 'text',
+                            'label' => $this->l('Icon Class'),
+                            'name' => 'icon_class',
+                            'desc' => $this->l('Font Awesome icon class (e.g., "fa fa-home")'),
+                            'col' => 4
+                        ),
+                        array(
+                            'type' => 'html',
+                            'name' => 'icon_class_wrapper_end',
+                            'html_content' => '</div>'
+                        ),
+                        array(
+                            'type' => 'html',
+                            'name' => 'icon_image_wrapper_start',
+                            'html_content' => '<div id="icon-image-wrapper" class="conditional-wrapper">'
+                        ),
+                        array(
+                            'type' => 'file',
+                            'label' => $this->l('Icon Image'),
+                            'name' => 'icon',
+                            'desc' => $this->l('Upload an icon image (small size recommended)'),
+                            'thumb' => $this->getIconImageUrl()
+                        ),
+                        array(
+                            'type' => 'html',
+                            'name' => 'icon_image_wrapper_end',
+                            'html_content' => '</div>'
+                        ),
+                        array(
+                            'type' => 'text',
+                            'label' => $this->l('Legend Icon'),
+                            'name' => 'legend_icon',
+                            'desc' => $this->l('Optional legend icon text'),
+                            'col' => 4
+                        ),
+                        array(
+                            'type' => 'file',
+                            'label' => $this->l('Menu Item Image'),
+                            'name' => 'image',
+                            'desc' => $this->l('Upload a main image for this menu item'),
+                            'thumb' => $this->getImageUrl()
+                        ),
+                    ),
+                    'submit' => array(
+                        'title' => $this->l('Save'),
+                    )
+                ),
+            ),
+            // Tab 4: Submenu Configuration
+            array(
+                'form' => array(
+                    'legend' => array(
+                        'title' => $this->l('Submenu Configuration'),
+                        'icon' => 'icon-sitemap'
+                    ),
+                    'input' => array(
+                        array(
+                            'type' => 'radio',
+                            'label' => $this->l('Submenu Type'),
+                            'name' => 'submenu_type',
+                            'values' => array(
+                                array('id' => 'submenu_type_0', 'value' => 0, 'label' => $this->l('No Submenu')),
+                                array('id' => 'submenu_type_1', 'value' => 1, 'label' => $this->l('Simple Submenu')),
+                                array('id' => 'submenu_type_2', 'value' => 2, 'label' => $this->l('Grid Submenu (Mega Menu)'))
+                            ),
+                        ),
+                        array(
+                            'type' => 'html',
+                            'name' => 'submenu_options_wrapper_start',
+                            'html_content' => '<div id="submenu-options-wrapper" class="conditional-wrapper">'
+                        ),
+                        array(
+                            'type' => 'text',
+                            'label' => $this->l('Submenu Width'),
+                            'name' => 'submenu_width',
+                            'desc' => $this->l('Submenu width in pixels (e.g., 800)'),
+                            'class' => 'fixed-width-sm',
+                            'suffix' => 'px'
+                        ),
+                        array(
+                            'type' => 'file',
+                            'label' => $this->l('Submenu Background Image'),
+                            'name' => 'submenu_image',
+                            'desc' => $this->l('Background image for submenu'),
+                            'thumb' => $this->getSubmenuImageUrl()
+                        ),
+                        array(
+                            'type' => 'select',
+                            'label' => $this->l('Background Repeat'),
+                            'name' => 'submenu_repeat',
+                            'options' => array(
+                                'query' => array(
+                                    array('id' => 'no-repeat', 'name' => $this->l('No Repeat')),
+                                    array('id' => 'repeat', 'name' => $this->l('Repeat')),
+                                    array('id' => 'repeat-x', 'name' => $this->l('Repeat Horizontally')),
+                                    array('id' => 'repeat-y', 'name' => $this->l('Repeat Vertically')),
+                                ),
+                                'id' => 'id',
+                                'name' => 'name'
+                            ),
+                        ),
+                        array(
+                            'type' => 'select',
+                            'label' => $this->l('Background Position'),
+                            'name' => 'submenu_bg_position',
+                            'options' => array(
+                                'query' => array(
+                                    array('id' => 'left top', 'name' => $this->l('Left Top')),
+                                    array('id' => 'center top', 'name' => $this->l('Center Top')),
+                                    array('id' => 'right top', 'name' => $this->l('Right Top')),
+                                    array('id' => 'left center', 'name' => $this->l('Left Center')),
+                                    array('id' => 'center center', 'name' => $this->l('Center Center')),
+                                    array('id' => 'right center', 'name' => $this->l('Right Center')),
+                                    array('id' => 'left bottom', 'name' => $this->l('Left Bottom')),
+                                    array('id' => 'center bottom', 'name' => $this->l('Center Bottom')),
+                                    array('id' => 'right bottom', 'name' => $this->l('Right Bottom')),
+                                ),
+                                'id' => 'id',
+                                'name' => 'name'
+                            ),
+                        ),
+                        array(
+                            'type' => 'html',
+                            'name' => 'submenu_options_wrapper_end',
+                            'html_content' => '</div>'
+                        ),
+                        array(
+                            'type' => 'html',
+                            'name' => 'grid_builder_wrapper_start',
+                            'html_content' => '<div id="grid-builder-wrapper" class="conditional-wrapper">'
+                        ),
+                        array(
+                            'type' => 'textarea',
+                            'label' => $this->l('Submenu Grid Content (JSON)'),
+                            'name' => 'submenu_content',
+                            'desc' => $this->l('Grid content in JSON format. Use Grid Builder (Phase 2 Sprint 2) for visual editing.'),
+                            'rows' => 10,
+                            'cols' => 70
+                        ),
+                        array(
+                            'type' => 'html',
+                            'name' => 'grid_builder_wrapper_end',
+                            'html_content' => '</div>'
+                        ),
+                    ),
+                    'submit' => array(
+                        'title' => $this->l('Save'),
+                    )
+                ),
+            ),
+            // Tab 5: Colors
+            array(
+                'form' => array(
+                    'legend' => array(
+                        'title' => $this->l('Color Customization'),
+                        'icon' => 'icon-tint'
+                    ),
+                    'input' => array(
+                        array(
+                            'type' => 'color',
+                            'label' => $this->l('Background Color'),
+                            'name' => 'bg_color',
+                            'class' => 'color-picker',
+                            'desc' => $this->l('Menu item background color')
+                        ),
+                        array(
+                            'type' => 'color',
+                            'label' => $this->l('Text Color'),
+                            'name' => 'txt_color',
+                            'class' => 'color-picker',
+                            'desc' => $this->l('Menu item text color')
+                        ),
+                        array(
+                            'type' => 'color',
+                            'label' => $this->l('Hover Background Color'),
+                            'name' => 'h_bg_color',
+                            'class' => 'color-picker',
+                            'desc' => $this->l('Background color on hover')
+                        ),
+                        array(
+                            'type' => 'color',
+                            'label' => $this->l('Hover Text Color'),
+                            'name' => 'h_txt_color',
+                            'class' => 'color-picker',
+                            'desc' => $this->l('Text color on hover')
+                        ),
+                        array(
+                            'type' => 'color',
+                            'label' => $this->l('Label Background Color'),
+                            'name' => 'labelbg_color',
+                            'class' => 'color-picker',
+                            'desc' => $this->l('Label badge background color')
+                        ),
+                        array(
+                            'type' => 'color',
+                            'label' => $this->l('Label Text Color'),
+                            'name' => 'labeltxt_color',
+                            'class' => 'color-picker',
+                            'desc' => $this->l('Label badge text color')
+                        ),
+                        array(
+                            'type' => 'color',
+                            'label' => $this->l('Submenu Background Color'),
+                            'name' => 'submenu_bg_color',
+                            'class' => 'color-picker',
+                            'desc' => $this->l('Submenu background color')
+                        ),
+                        array(
+                            'type' => 'color',
+                            'label' => $this->l('Submenu Link Color'),
+                            'name' => 'submenu_link_color',
+                            'class' => 'color-picker',
+                            'desc' => $this->l('Submenu link text color')
+                        ),
+                        array(
+                            'type' => 'color',
+                            'label' => $this->l('Submenu Hover Color'),
+                            'name' => 'submenu_hover_color',
+                            'class' => 'color-picker',
+                            'desc' => $this->l('Submenu link hover color')
+                        ),
+                        array(
+                            'type' => 'color',
+                            'label' => $this->l('Submenu Title Color'),
+                            'name' => 'submenu_title_color',
+                            'class' => 'color-picker',
+                            'desc' => $this->l('Submenu column title color')
+                        ),
+                        array(
+                            'type' => 'color',
+                            'label' => $this->l('Submenu Title Hover Color'),
+                            'name' => 'submenu_title_colorh',
+                            'class' => 'color-picker',
+                            'desc' => $this->l('Submenu title hover color')
+                        ),
+                        array(
+                            'type' => 'color',
+                            'label' => $this->l('Submenu Title Bottom Color'),
+                            'name' => 'submenu_titleb_color',
+                            'class' => 'color-picker',
+                            'desc' => $this->l('Submenu title bottom border color')
+                        ),
+                    ),
+                    'submit' => array(
+                        'title' => $this->l('Save'),
+                    )
+                ),
+            ),
+            // Tab 6: Borders
+            array(
+                'form' => array(
+                    'legend' => array(
+                        'title' => $this->l('Border Configuration'),
+                        'icon' => 'icon-square-o'
+                    ),
+                    'input' => array(
+                        array(
+                            'type' => 'text',
+                            'label' => $this->l('Top Border'),
+                            'name' => 'submenu_border_t',
+                            'desc' => $this->l('Top border CSS (e.g., "1px solid #ccc")'),
+                            'col' => 6
+                        ),
+                        array(
+                            'type' => 'text',
+                            'label' => $this->l('Right Border'),
+                            'name' => 'submenu_border_r',
+                            'desc' => $this->l('Right border CSS'),
+                            'col' => 6
+                        ),
+                        array(
+                            'type' => 'text',
+                            'label' => $this->l('Bottom Border'),
+                            'name' => 'submenu_border_b',
+                            'desc' => $this->l('Bottom border CSS'),
+                            'col' => 6
+                        ),
+                        array(
+                            'type' => 'text',
+                            'label' => $this->l('Left Border'),
+                            'name' => 'submenu_border_l',
+                            'desc' => $this->l('Left border CSS'),
+                            'col' => 6
+                        ),
+                        array(
+                            'type' => 'text',
+                            'label' => $this->l('Inner Border'),
+                            'name' => 'submenu_border_i',
+                            'desc' => $this->l('Inner column border CSS'),
+                            'col' => 6
+                        ),
+                    ),
+                    'submit' => array(
+                        'title' => $this->l('Save'),
+                    )
+                ),
+            ),
+            // Tab 7: Access Control
+            array(
+                'form' => array(
+                    'legend' => array(
+                        'title' => $this->l('Access Control'),
+                        'icon' => 'icon-users'
+                    ),
+                    'input' => array(
+                        array(
+                            'type' => 'group',
+                            'label' => $this->l('Customer Group Access'),
+                            'name' => 'groupBox',
+                            'values' => $customer_groups,
+                            'desc' => $this->l('Select which customer groups can see this menu item'),
+                        ),
+                    ),
+                    'submit' => array(
+                        'title' => $this->l('Save'),
+                    )
+                ),
+            ),
+        );
+
+        return parent::renderForm();
+    }
+
+    /**
+     * Get parent menu items for dropdown
+     */
+    protected function getParentMenuItems()
+    {
         $parent_items = array(array('id' => 0, 'name' => $this->l('Root (No Parent)')));
         $items = PcAdvancedMenuItem::getMenuItems($this->context->language->id, $this->context->shop->id, false);
+
         foreach ($items as $item) {
             if (!isset($_GET['id_menu']) || (int)$item['id_menu'] !== (int)$_GET['id_menu']) {
                 $parent_items[] = array(
@@ -227,145 +772,57 @@ class AdminPcAdvancedMenuController extends ModuleAdminController
             }
         }
 
-        // Get categories
-        $categories = Category::getCategories($this->context->language->id, true, false);
-        $category_list = array(array('id_category' => 0, 'name' => $this->l('-- Select Category --')));
+        return $parent_items;
+    }
+
+    /**
+     * Get categories for dropdown
+     */
+    protected function getCategoryList()
+    {
+        $id_lang = $this->context->language->id;
+        $categories = Category::getCategories($id_lang, true, false);
+
+        $list = array(array('id_category' => 0, 'name' => $this->l('-- Select Category --')));
+
         foreach ($categories as $category) {
-            $category_list[] = array(
+            $list[] = array(
                 'id_category' => $category['id_category'],
                 'name' => $category['name']
             );
         }
 
-        // Get CMS pages
-        $cms_pages = CMS::getCMSPages($this->context->language->id);
-        $cms_list = array(array('id_cms' => 0, 'title' => $this->l('-- Select CMS Page --')));
-        foreach ($cms_pages as $cms) {
-            $cms_list[] = array(
-                'id_cms' => $cms['id_cms'],
-                'title' => $cms['meta_title']
-            );
+        return $list;
+    }
+
+    /**
+     * Get CMS pages for dropdown
+     */
+    protected function getCMSList()
+    {
+        $id_lang = $this->context->language->id;
+        $cms_pages = CMS::getCMSPages($id_lang);
+
+        $list = array(array('id_cms' => 0, 'title' => $this->l('-- Select CMS Page --')));
+
+        if (is_array($cms_pages)) {
+            foreach ($cms_pages as $cms) {
+                $list[] = array(
+                    'id_cms' => $cms['id_cms'],
+                    'title' => $cms['meta_title']
+                );
+            }
         }
 
-        $this->fields_form = array(
-            'legend' => array(
-                'title' => $this->l('Menu Item'),
-                'icon' => 'icon-list'
-            ),
-            'input' => array(
-                array(
-                    'type' => 'text',
-                    'label' => $this->l('Title'),
-                    'name' => 'title',
-                    'lang' => true,
-                    'required' => false,
-                    'desc' => $this->l('Leave empty to use category/CMS name automatically'),
-                    'col' => 6
-                ),
-                array(
-                    'type' => 'select',
-                    'label' => $this->l('Item Type'),
-                    'name' => 'item_type',
-                    'required' => true,
-                    'options' => array(
-                        'query' => array(
-                            array('id' => 'custom', 'name' => $this->l('Custom Link')),
-                            array('id' => 'category', 'name' => $this->l('Category')),
-                            array('id' => 'cms', 'name' => $this->l('CMS Page')),
-                            array('id' => 'tab', 'name' => $this->l('Tab (Parent Item)')),
-                        ),
-                        'id' => 'id',
-                        'name' => 'name'
-                    ),
-                    'desc' => $this->l('Select the type of menu item')
-                ),
-                array(
-                    'type' => 'text',
-                    'label' => $this->l('Custom Link'),
-                    'name' => 'link',
-                    'lang' => true,
-                    'desc' => $this->l('Used for custom link type only'),
-                    'col' => 6
-                ),
-                array(
-                    'type' => 'select',
-                    'label' => $this->l('Category'),
-                    'name' => 'id_category',
-                    'options' => array(
-                        'query' => $category_list,
-                        'id' => 'id_category',
-                        'name' => 'name'
-                    ),
-                    'desc' => $this->l('Select category (for category type only)')
-                ),
-                array(
-                    'type' => 'select',
-                    'label' => $this->l('CMS Page'),
-                    'name' => 'id_cms',
-                    'options' => array(
-                        'query' => $cms_list,
-                        'id' => 'id_cms',
-                        'name' => 'title'
-                    ),
-                    'desc' => $this->l('Select CMS page (for CMS type only)')
-                ),
-                array(
-                    'type' => 'select',
-                    'label' => $this->l('Parent Item'),
-                    'name' => 'id_parent',
-                    'options' => array(
-                        'query' => $parent_items,
-                        'id' => 'id',
-                        'name' => 'name'
-                    ),
-                    'desc' => $this->l('Select parent item for multi-level menu')
-                ),
-                array(
-                    'type' => 'text',
-                    'label' => $this->l('Icon Class'),
-                    'name' => 'icon',
-                    'desc' => $this->l('Font Awesome icon class (e.g., "fa fa-home")'),
-                    'col' => 4
-                ),
-                array(
-                    'type' => 'file',
-                    'label' => $this->l('Image'),
-                    'name' => 'image',
-                    'desc' => $this->l('Upload an image for this menu item'),
-                    'thumb' => $this->getImageUrl()
-                ),
-                array(
-                    'type' => 'text',
-                    'label' => $this->l('Position'),
-                    'name' => 'position',
-                    'class' => 'fixed-width-xs',
-                    'desc' => $this->l('Menu item position')
-                ),
-                array(
-                    'type' => 'switch',
-                    'label' => $this->l('Active'),
-                    'name' => 'active',
-                    'is_bool' => true,
-                    'values' => array(
-                        array(
-                            'id' => 'active_on',
-                            'value' => 1,
-                            'label' => $this->l('Yes')
-                        ),
-                        array(
-                            'id' => 'active_off',
-                            'value' => 0,
-                            'label' => $this->l('No')
-                        )
-                    ),
-                ),
-            ),
-            'submit' => array(
-                'title' => $this->l('Save'),
-            )
-        );
+        return $list;
+    }
 
-        return parent::renderForm();
+    /**
+     * Get customer groups
+     */
+    protected function getCustomerGroups()
+    {
+        return Group::getGroups($this->context->language->id);
     }
 
     /**
@@ -385,7 +842,7 @@ class AdminPcAdvancedMenuController extends ModuleAdminController
     }
 
     /**
-     * Get image URL
+     * Get main menu item image URL
      */
     protected function getImageUrl()
     {
@@ -393,6 +850,34 @@ class AdminPcAdvancedMenuController extends ModuleAdminController
             $menu_item = new PcAdvancedMenuItem((int)Tools::getValue('id_menu'));
             if ($menu_item->image) {
                 return _PS_IMG_ . 'menu/' . $menu_item->image;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get icon image URL
+     */
+    protected function getIconImageUrl()
+    {
+        if (Tools::getValue('id_menu')) {
+            $menu_item = new PcAdvancedMenuItem((int)Tools::getValue('id_menu'));
+            if ($menu_item->icon && $menu_item->icon_type == 0) {
+                return _PS_IMG_ . 'menu/icons/' . $menu_item->icon;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get submenu background image URL
+     */
+    protected function getSubmenuImageUrl()
+    {
+        if (Tools::getValue('id_menu')) {
+            $menu_item = new PcAdvancedMenuItem((int)Tools::getValue('id_menu'));
+            if ($menu_item->submenu_image) {
+                return _PS_IMG_ . 'menu/submenu/' . $menu_item->submenu_image;
             }
         }
         return null;
@@ -417,10 +902,11 @@ class AdminPcAdvancedMenuController extends ModuleAdminController
     }
 
     /**
-     * Process image upload
+     * Process image uploads (handles icon, image, submenu_image)
      */
     protected function processImageUpload()
     {
+        // Process main menu item image
         if (isset($_FILES['image']) && $_FILES['image']['size'] > 0) {
             $image_name = uniqid() . '_' . $_FILES['image']['name'];
             $upload_dir = _PS_IMG_DIR_ . 'menu/';
@@ -431,6 +917,34 @@ class AdminPcAdvancedMenuController extends ModuleAdminController
 
             if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_dir . $image_name)) {
                 $_POST['image'] = $image_name;
+            }
+        }
+
+        // Process icon image
+        if (isset($_FILES['icon']) && $_FILES['icon']['size'] > 0) {
+            $icon_name = uniqid() . '_' . $_FILES['icon']['name'];
+            $upload_dir = _PS_IMG_DIR_ . 'menu/icons/';
+
+            if (!file_exists($upload_dir)) {
+                mkdir($upload_dir, 0755, true);
+            }
+
+            if (move_uploaded_file($_FILES['icon']['tmp_name'], $upload_dir . $icon_name)) {
+                $_POST['icon'] = $icon_name;
+            }
+        }
+
+        // Process submenu background image
+        if (isset($_FILES['submenu_image']) && $_FILES['submenu_image']['size'] > 0) {
+            $submenu_image_name = uniqid() . '_' . $_FILES['submenu_image']['name'];
+            $upload_dir = _PS_IMG_DIR_ . 'menu/submenu/';
+
+            if (!file_exists($upload_dir)) {
+                mkdir($upload_dir, 0755, true);
+            }
+
+            if (move_uploaded_file($_FILES['submenu_image']['tmp_name'], $upload_dir . $submenu_image_name)) {
+                $_POST['submenu_image'] = $submenu_image_name;
             }
         }
     }

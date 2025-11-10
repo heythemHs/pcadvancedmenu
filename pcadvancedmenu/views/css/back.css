@@ -1,0 +1,234 @@
+/**
+ * PC Advanced Menu - Admin Back Office Styles
+ * Styles for enhanced AdminController interface
+ */
+
+/* Conditional field wrappers */
+.conditional-wrapper {
+    display: none;
+}
+
+.conditional-wrapper.active {
+    display: block;
+}
+
+/* Color picker styling */
+.color-picker-wrapper {
+    position: relative;
+}
+
+.sp-replacer {
+    padding: 5px;
+    border: 1px solid #ccc;
+    background: #fff;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.sp-preview {
+    width: 25px;
+    height: 25px;
+    border: 1px solid #ccc;
+}
+
+.sp-dd {
+    padding: 5px;
+}
+
+/* Field organization */
+.form-group.color-field {
+    margin-bottom: 15px;
+}
+
+.form-group.border-field input {
+    max-width: 200px;
+}
+
+.form-group.width-field input {
+    max-width: 150px;
+}
+
+/* Helper text */
+.form-group .help-block {
+    color: #999;
+    font-size: 12px;
+    margin-top: 5px;
+    font-style: italic;
+}
+
+/* Tab navigation enhancement */
+.nav-tabs {
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e5e5e5;
+}
+
+.nav-tabs > li > a {
+    padding: 10px 15px;
+    font-weight: 500;
+}
+
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
+    border-bottom: 3px solid #00aff0;
+}
+
+/* Form sections */
+.panel-heading {
+    background-color: #f7f7f7;
+    border-bottom: 2px solid #e5e5e5;
+}
+
+/* Radio and switch groups */
+.radio label,
+.switch label {
+    font-weight: normal;
+    margin-right: 15px;
+}
+
+/* File upload preview */
+.bootstrap-filestyle {
+    margin-bottom: 10px;
+}
+
+.form-group img {
+    max-width: 100px;
+    max-height: 100px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    padding: 5px;
+    background: #fff;
+}
+
+/* Textarea for JSON content */
+textarea[name="submenu_content"] {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+}
+
+/* Grid builder section */
+#grid-builder-wrapper .form-group {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 4px;
+    border: 1px dashed #ccc;
+}
+
+/* Customer group checkboxes */
+.form-group-wrapper {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #e5e5e5;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+/* Legend icons */
+.legend-icon-field .help-block:before {
+    content: "ℹ️ ";
+}
+
+/* Form validation */
+.has-error .help-block {
+    color: #a94442;
+}
+
+.has-success .help-block {
+    color: #3c763d;
+}
+
+/* Multi-language flags */
+.translatable-field .form-group {
+    position: relative;
+}
+
+.translatable-field .lang-flag {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .nav-tabs > li {
+        float: none;
+    }
+
+    .nav-tabs > li > a {
+        display: block;
+        width: 100%;
+    }
+
+    .form-group.color-field,
+    .form-group.border-field {
+        margin-bottom: 20px;
+    }
+}
+
+/* Icon type selector visual feedback */
+input[name="icon_type"]:checked + label {
+    font-weight: bold;
+    color: #00aff0;
+}
+
+/* URL type selector visual feedback */
+input[name="url_type"]:checked + label {
+    font-weight: bold;
+    color: #00aff0;
+}
+
+/* Submenu type selector visual feedback */
+input[name="submenu_type"]:checked + label {
+    font-weight: bold;
+    color: #00aff0;
+}
+
+/* Menu type selector visual feedback */
+input[name="menu_type"]:checked + label {
+    font-weight: bold;
+    color: #00aff0;
+}
+
+/* Loading indicator for AJAX operations */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-overlay.active {
+    display: flex;
+}
+
+.loading-spinner {
+    color: #fff;
+    font-size: 24px;
+}
+
+/* Tooltip styles for field descriptions */
+.form-group .tooltip-icon {
+    margin-left: 5px;
+    color: #999;
+    cursor: help;
+}
+
+/* Panel customization */
+.panel-default > .panel-heading {
+    background-color: #f5f5f5;
+}
+
+.panel-default {
+    margin-bottom: 20px;
+}
+
+/* Submit button enhancement */
+.panel-footer button[type="submit"] {
+    min-width: 150px;
+}

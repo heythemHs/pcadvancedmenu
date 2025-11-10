@@ -52,6 +52,7 @@ class PcAdvancedMenu extends Module
             $this->registerHook('header') &&
             $this->registerHook('displayNav') &&
             $this->registerHook('displayTop') &&
+            $this->registerHook('displayBackOfficeHeader') &&
             $this->installTab();
     }
 
@@ -113,6 +114,26 @@ class PcAdvancedMenu extends Module
 
         // Add Font Awesome if not already loaded
         $this->context->controller->addCSS('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+    }
+
+    /**
+     * Load admin assets in back office
+     */
+    public function hookDisplayBackOfficeHeader()
+    {
+        // Only load on the AdminPcAdvancedMenu controller
+        if (Tools::getValue('controller') == 'AdminPcAdvancedMenu' ||
+            Tools::getValue('configure') == $this->name) {
+            // Load admin CSS
+            $this->context->controller->addCSS($this->_path . 'views/css/back.css');
+
+            // Load admin JavaScript
+            $this->context->controller->addJS($this->_path . 'views/js/back.js');
+
+            // Load Spectrum.js color picker library
+            $this->context->controller->addCSS('https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.css');
+            $this->context->controller->addJS('https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.js');
+        }
     }
 
     /**
