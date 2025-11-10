@@ -12,10 +12,14 @@ if (!defined('_PS_VERSION_')) {
 }
 
 require_once dirname(__FILE__) . '/classes/PcAdvancedMenuItem.php';
+require_once dirname(__FILE__) . '/classes/PcAdvancedMenuHtml.php';
+require_once dirname(__FILE__) . '/classes/PcAdvancedMenuLinks.php';
 
 class PcAdvancedMenu extends Module
 {
     protected $config_form = false;
+    private $_html = '';
+    private $user_groups;
 
     public function __construct()
     {
